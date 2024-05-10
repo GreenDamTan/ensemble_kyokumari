@@ -15,6 +15,9 @@ using UnityEngine.UIElements.Collections;
 using TMPro;
 using UnityEngine;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Text;
 
 namespace kyokumariPlugin;
 
@@ -23,7 +26,6 @@ public class Plugin : BaseUnityPlugin
 {
     public static ManualLogSource gLog = new ManualLogSource("glog");
     public static string patchDir = Environment.CurrentDirectory+ "\\cnPatch\\";
-    static Dictionary<string, string> myDictionary = new Dictionary<string, string>();
     private void Awake()
     {
         // Plugin startup logic
@@ -36,7 +38,6 @@ public class Plugin : BaseUnityPlugin
         Harmony _pluginTriggers = Harmony.CreateAndPatchAll(
                 typeof(Triggers)
             );
-
     }
 
     public static void R1() {
@@ -47,6 +48,14 @@ public class Plugin : BaseUnityPlugin
             myDictionary.TryAdd(lines[i], lines[i + 1]);
         }
     }
+    static Dictionary<string, string> myDictionary = new Dictionary<string, string>();
+    public static string ReplaceTextFromDictionary(string text) {
+        if (myDictionary.ContainsKey(text))
+        {
+            text = myDictionary.Get(text);
+        }
+        return text;
+    }
     private class Triggers
     {
         [HarmonyPrefix]
@@ -54,11 +63,17 @@ public class Plugin : BaseUnityPlugin
         static public void DisplayMessageText_HOOK(ref string text)
         {
             //gLog.LogInfo("DisplayMessageText: " + text);
-            if (myDictionary.ContainsKey(text))
-            {
-                text = myDictionary.Get(text);
-            }
+            text = ReplaceTextFromDictionary(text);
         }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(CatSystem.Module.CatSystem2.NovelCommand), nameof(CatSystem.Module.CatSystem2.NovelCommand.DisplayMessageName), new Type[] { typeof(string), typeof(bool) })]
+        static public void DisplayMessageName_HOOK(ref string text, ref bool autoface)
+        {
+            text = ReplaceTextFromDictionary(text);
+        }
+
+
         //[HarmonyPostfix]
         //[HarmonyPatch(typeof(TMPro.TMP_FontAsset), "TryAddCharacterInternal")]
         //static public void TryAddCharacterInternal_HOOK(ref uint unicode, ref TMP_Character character, ref TMP_FontAsset __instance, ref bool __result)
@@ -98,6 +113,48 @@ public class Plugin : BaseUnityPlugin
         //    }
 
         //}
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(CatSystem.Module.ModuleFeScript), nameof(CatSystem.Module.ModuleFeScript.LoadScript), new Type[] { typeof(string), typeof(int[]) })]
+        static public void LoadScript_HOOK(ref string scriptName, ref int[] bootParam)
+        {
+            if (scriptName == "title"||scriptName== "wmlogo")
+            {
+                ChangeWindowTitle();
+            }
+        }
     }
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+    public static extern bool SetWindowText(IntPtr hwnd, String lpString);
+    [DllImport("user32.dll")]
+    private static extern bool EnumThreadWindows(uint dwThreadId, EnumWindowsProc lpEnumFunc, IntPtr lParam);
+    private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern int GetClassName(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
+    [DllImport("kernel32.dll")]
+    private static extern uint GetCurrentThreadId();
+
+    public static void ChangeWindowTitle()
+    {
+        IntPtr unityHWnd = IntPtr.Zero;
+        string UNITY_WND_CLASSNAME = "UnityWndClass";
+        EnumThreadWindows(GetCurrentThreadId(), (hWnd, lParam) =>
+        {
+            var classText = new StringBuilder(UNITY_WND_CLASSNAME.Length + 1);
+            GetClassName(hWnd, classText, classText.Capacity);
+
+            if (classText.ToString() == UNITY_WND_CLASSNAME)
+            {
+                unityHWnd = hWnd;
+                return false;
+            }
+            return true;
+        }, IntPtr.Zero);
+        gLog.LogInfo("unityHWnd:"+unityHWnd.ToInt64().ToString());
+
+        if (unityHWnd != IntPtr.Zero)
+        {
+            SetWindowText(unityHWnd,"旭光的mariage 体验版");
+        }
+    }
 }
