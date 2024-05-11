@@ -42,10 +42,22 @@ public class Plugin : BaseUnityPlugin
     }
 
     public static void R1() {
-        string[] co_list = { "co_00.txt" };
+        string[] co_list = {
+            "co_00.txt","co_01.txt","co_02.txt","co_03.txt","co_04.txt",
+            "co_05.txt","co_06.txt","co_07.txt","co_08.txt","co_09.txt",
+            "co_10.txt","co_11.txt","co_12.txt","co_13.txt","co_14.txt",
+            "co_15.txt","co_16.txt","co_17.txt","co_18.txt","co_19.txt",
+            "co_20.txt"
+        };
         for (int i = 0; i < co_list.Length; i++)
         {
-            string[] lines = File.ReadAllLines(Path.Join(patchDir, co_list[i]));
+            string path = Path.Join(patchDir, co_list[i] );
+            if (!File.Exists(path))
+            {
+                gLog.LogInfo("Not Exists " + co_list[i]);
+                continue;
+            }
+            string[] lines = File.ReadAllLines(path);
             gLog.LogInfo("Read "+ co_list[i]);
             for (int j = 0; j < lines.Length; j = j + 2)
             {
@@ -55,12 +67,13 @@ public class Plugin : BaseUnityPlugin
         }
     }
     static Dictionary<string, string> myDictionary = new Dictionary<string, string>();
-    public static string ReplaceTextFromDictionary(string text) {
-        if (myDictionary.ContainsKey(text))
+    public static string ReplaceTextFromDictionary(string beforeText) {
+        string afterText;
+        if (myDictionary.TryGetValue(beforeText, out afterText))
         {
-            text = myDictionary.Get(text);
+            return afterText;
         }
-        return text;
+        return beforeText;
     }
     private class Triggers
     {
