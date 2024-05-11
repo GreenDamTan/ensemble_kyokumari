@@ -99,7 +99,7 @@ namespace kyokumariPlugin
         public static void Init()
         {
             var modPath = Plugin.patchDir;
-            var fontPath = Path.Join(modPath, "tmpchinesefont");
+            var fontPath = Path.Join(modPath, "kyokumari_trial_font.asset");
             if (!AddChineseFont(fontPath))
             {
                 Plugin.gLog.LogWarning("你没有下载中文字体"+ fontPath);

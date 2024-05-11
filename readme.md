@@ -10,3 +10,14 @@
 修改后需要重写启动游戏
 
 ![测试图](/cnpatch/20240511023425.jpg)
+
+## 关于字体
+字体包中包括的字在cnPatch/kyokumari_trial_font下
+
+不在其中的字不能正常展示
+
+需要新增字在更变文件后需要重新生成kyokumari_trial_font.asset
+
+不过推荐是新增一个文件走fallback list，反正常用字应该都有了
+
+重生成一次肯定几个小时没了
