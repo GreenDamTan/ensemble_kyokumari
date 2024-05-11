@@ -18,6 +18,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Text;
+using static CatSystem.Emote.Inertia;
 
 namespace kyokumariPlugin;
 
@@ -41,11 +42,16 @@ public class Plugin : BaseUnityPlugin
     }
 
     public static void R1() {
-        string[] lines = File.ReadAllLines(Path.Join(patchDir , "co_00.txt"));
-        for (int i = 0; i < lines.Length; i=i+2)
+        string[] co_list = { "co_00.txt" };
+        for (int i = 0; i < co_list.Length; i++)
         {
-            //gLog.LogInfo(lines[i]+ lines[i + 1]);
-            myDictionary.TryAdd(lines[i], lines[i + 1]);
+            string[] lines = File.ReadAllLines(Path.Join(patchDir, co_list[i]));
+            gLog.LogInfo("Read "+ co_list[i]);
+            for (int j = 0; j < lines.Length; j = j + 2)
+            {
+                //gLog.LogInfo(lines[j]+ lines[j + 1]);
+                myDictionary.TryAdd(lines[j].Replace("\t", ""), lines[j + 1].Replace("\t", ""));
+            }
         }
     }
     static Dictionary<string, string> myDictionary = new Dictionary<string, string>();
