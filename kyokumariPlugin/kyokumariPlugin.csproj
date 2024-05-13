@@ -40,6 +40,9 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>..\旭光のマリアージュ体験版_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="CatSystem.File">
+      <HintPath>..\旭光のマリアージュ体験版_Data\Managed\CatSystem.File.dll</HintPath>
+    </Reference>
     <Reference Include="CatSystem.Utility">
       <HintPath>..\旭光のマリアージュ体験版_Data\Managed\CatSystem.Utility.dll</HintPath>
     </Reference>

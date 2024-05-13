@@ -92,6 +92,23 @@ public class Plugin : BaseUnityPlugin
             text = ReplaceTextFromDictionary(text);
         }
 
+        //[HarmonyPrefix]
+        //[HarmonyPatch(typeof(CatSystem.AtxImageBase), nameof(CatSystem.AtxImageBase.Load), new Type[] { typeof(Stream), typeof(string) })]
+        //static public void CatSystem_AtxImageBase_Load_HOOK(ref Stream stream, ref string baseName)
+        //{
+        //    gLog.LogInfo("CatSystem_AtxImageBase_Load: " + baseName);
+        //    //var stackInfo = new System.Diagnostics.StackTrace(true);
+        //    //gLog.LogMessage(stackInfo.ToString());
+        //}
+
+        //[HarmonyPrefix]
+        //[HarmonyPatch(typeof(CatSystem.File.FileManager), nameof(CatSystem.File.FileManager.ReadAtxImage), new Type[] { typeof(string), typeof(string), typeof(bool) })]
+        //static public void CatSystem_File_FileManager_ReadAtxImage_HOOK( ref string dataType, ref string filename, ref bool texreadonly)
+        //{
+        //    gLog.LogInfo(string.Format("CatSystem_File_FileManager_ReadAtxImage_Load: {0} {1} {2}", dataType, filename, texreadonly));
+        //    var stackInfo = new System.Diagnostics.StackTrace(true);
+        //    gLog.LogMessage(stackInfo.ToString());
+        //}
 
         //[HarmonyPostfix]
         //[HarmonyPatch(typeof(TMPro.TMP_FontAsset), "TryAddCharacterInternal")]
