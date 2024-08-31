@@ -51,7 +51,7 @@ public class Plugin : BaseUnityPlugin
         };
         for (int i = 0; i < co_list.Length; i++)
         {
-            string path = Path.Join(patchDir, co_list[i] );
+            string path = Path.Join(patchDir, "text", co_list[i] );
             if (!File.Exists(path))
             {
                 gLog.LogInfo("Not Exists " + co_list[i]);
