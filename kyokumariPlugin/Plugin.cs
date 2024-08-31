@@ -41,7 +41,7 @@ public class Plugin : BaseUnityPlugin
             );
     }
 
-    public static void R1() {
+    private static void R1() {
         string[] co_list = {
             "co_00.txt","co_01.txt","co_02.txt","co_03.txt","co_04.txt",
             "co_05.txt","co_06.txt","co_07.txt","co_08.txt","co_09.txt",
@@ -67,7 +67,7 @@ public class Plugin : BaseUnityPlugin
         }
     }
     static Dictionary<string, string> myDictionary = new Dictionary<string, string>();
-    public static string ReplaceTextFromDictionary(string beforeText) {
+    private static string ReplaceTextFromDictionary(string beforeText) {
         string afterText;
         if (myDictionary.TryGetValue(beforeText, out afterText))
         {
@@ -79,7 +79,7 @@ public class Plugin : BaseUnityPlugin
     {
         [HarmonyPrefix]
         [HarmonyPatch(typeof(CatSystem.Module.CatSystem2.NovelCommand), nameof(CatSystem.Module.CatSystem2.NovelCommand.DisplayMessageText), new Type[] { typeof(string) })]
-        static public void DisplayMessageText_HOOK(ref string text)
+        static private void DisplayMessageText_HOOK(ref string text)
         {
             //gLog.LogInfo("DisplayMessageText: " + text);
             text = ReplaceTextFromDictionary(text);
@@ -87,7 +87,7 @@ public class Plugin : BaseUnityPlugin
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(CatSystem.Module.CatSystem2.NovelCommand), nameof(CatSystem.Module.CatSystem2.NovelCommand.DisplayMessageName), new Type[] { typeof(string), typeof(bool) })]
-        static public void DisplayMessageName_HOOK(ref string text, ref bool autoface)
+        static private void DisplayMessageName_HOOK(ref string text, ref bool autoface)
         {
             text = ReplaceTextFromDictionary(text);
         }
@@ -151,16 +151,26 @@ public class Plugin : BaseUnityPlugin
         //}
         [HarmonyPostfix]
         [HarmonyPatch(typeof(CatSystem.Module.ModuleFeScript), nameof(CatSystem.Module.ModuleFeScript.LoadScript), new Type[] { typeof(string), typeof(int[]) })]
-        static public void LoadScript_HOOK(ref string scriptName, ref int[] bootParam)
+        static private void LoadScript_HOOK(ref string scriptName, ref int[] bootParam)
         {
             if (scriptName == "title"||scriptName== "wmlogo")
             {
                 ChangeWindowTitle();
             }
         }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(CatSystem.StringVariable), nameof(CatSystem.StringVariable.SetVariable), new Type[] { typeof(int), typeof(string) })]
+        static private void SetVariable_HOOK(ref int no, ref string str)
+        {
+            if (str == "5A51610A-D960-43D7")
+            {
+                str = "{CB22F1FC-79CC-49B9-92A1-8BB882CA249E}";
+            }
+            gLog.LogInfo(str);
+        }
     }
     [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    public static extern bool SetWindowText(IntPtr hwnd, String lpString);
+    private static extern bool SetWindowText(IntPtr hwnd, String lpString);
     [DllImport("user32.dll")]
     private static extern bool EnumThreadWindows(uint dwThreadId, EnumWindowsProc lpEnumFunc, IntPtr lParam);
     private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
@@ -170,7 +180,7 @@ public class Plugin : BaseUnityPlugin
     [DllImport("kernel32.dll")]
     private static extern uint GetCurrentThreadId();
 
-    public static void ChangeWindowTitle()
+    private static void ChangeWindowTitle()
     {
         IntPtr unityHWnd = IntPtr.Zero;
         string UNITY_WND_CLASSNAME = "UnityWndClass";
@@ -190,7 +200,7 @@ public class Plugin : BaseUnityPlugin
 
         if (unityHWnd != IntPtr.Zero)
         {
-            SetWindowText(unityHWnd,"旭光的mariage 体验版");
+            SetWindowText(unityHWnd,"旭光的mariage");
         }
     }
 }

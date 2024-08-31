@@ -14,6 +14,7 @@
     </RestoreAdditionalProjectSources>
     <RootNamespace>kyokumariPlugin</RootNamespace>
     <OutputType>Library</OutputType>
+    <IncludeSymbols>False</IncludeSymbols>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
